@@ -13,6 +13,7 @@ struct MemberInfo {
 };
 
 struct Directory {
+  size_t startPosition;
   size_t size;
   int numMembers;
   struct MemberInfo *membersInfo;
@@ -21,7 +22,6 @@ struct Directory {
 struct Archiver {
   char *pathName;
   struct Directory directory;
-  char *membersContent;
 };
 
 struct FilePaths {
@@ -30,6 +30,12 @@ struct FilePaths {
 };
 
 struct Archiver *readArchiverFile(char *archiverPath);
+
+void writeDirectoryOnFile(struct Archiver *archiver, char *filePath);
+
+struct MemberInfo *findMemberInfo(struct Archiver *archiver, char *filePath);
+
+void removeMember(struct Archiver *archiver, char *memberPath);
 
 void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths);
 

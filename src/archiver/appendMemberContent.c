@@ -1,0 +1,1 @@
+void appendMemberContent(archiver, &memberInfo) {}
