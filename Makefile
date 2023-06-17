@@ -1,13 +1,13 @@
 TARGET  = vina++
 
-SRCDIRS = ./src/
-INCDIRS = ./src/
+SRCDIRS = ./src ./src/archiver
+INCDIRS = ./src
 
 CC			= gcc
 CFILES		= $(foreach D, $(SRCDIRS), $(wildcard $(D)/*.c))
 CFLAGS		= -Wall -Wextra -pedantic -std=c99
 LDFLAGS		= $(foreach D, $(INCDIRS), -I$(D))
-LBFLAGS		= -lm
+# LBFLAGS		= -lm
 OBJFILES	= $(patsubst %.c, %.o, $(CFILES))
 
 all: $(TARGET)

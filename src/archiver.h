@@ -31,11 +31,14 @@ struct FilePaths {
 
 struct Archiver *readArchiverFile(char *archiverPath);
 
-void writeDirectoryOnFile(struct Archiver *archiver, char *filePath);
+void writeDirectoryOnFile(struct Archiver *archiver);
 
 struct MemberInfo *findMemberInfo(struct Archiver *archiver, char *filePath);
 
 void removeMember(struct Archiver *archiver, char *memberPath);
+
+void appendMemberContent(struct Archiver *archiver,
+                         struct MemberInfo *memberInfo);
 
 void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths);
 

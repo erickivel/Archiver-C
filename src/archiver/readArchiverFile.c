@@ -13,7 +13,8 @@ struct Archiver *readArchiverFile(char *archiverPath) {
   if (!archiverFile) {
     archiverFile = fopen(archiverPath, "w+");
     archiver->directory.numMembers = 0;
-    archiver->directory.startPosition = 0;
+    // Jump the directory start position
+    archiver->directory.startPosition = sizeof(size_t);
     archiver->directory.size = sizeof(int) + sizeof(size_t);
     archiver->directory.membersInfo = malloc(sizeof(struct MemberInfo));
 

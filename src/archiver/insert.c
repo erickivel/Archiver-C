@@ -3,13 +3,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-
-#define BUFFER_SIZE 1024
+#include <unistd.h>
 
 struct MemberInfo *createMemberInfo(char *filePath) {
   struct MemberInfo *memberInfo = malloc(sizeof(struct MemberInfo));
   struct stat fileInfo;
-
   stat(filePath, &fileInfo);
 
   memberInfo->index = 0;
@@ -32,19 +30,9 @@ void updateDirectorySize(struct Directory *directory) {
 
 void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
   if (filePaths->size > 0) {
-    FILE *archiverRead = fopen(archiver->pathName, "r");
-    FILE *archiverWrite = fopen(archiver->pathName, "w");
-
     for (int i = 0; i < filePaths->size; i++) {
       struct MemberInfo *memberInfo =
           findMemberInfo(archiver, filePaths->names[i]);
-
-      FILE *fileToInsert = fopen(filePaths->names[i], "r");
-
-      if (!archiverRead || !archiverWrite || !fileToInsert) {
-        perror("It was not possible to open the archiver files!");
-        exit(1);
-      }
 
       if (memberInfo) {
         return;
@@ -57,7 +45,7 @@ void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
         // Insert file & update archiver directory
         memberInfo = createMemberInfo(filePaths->names[i]);
 
-        appendMemberContent(archiver, &memberInfo);
+        appendMemberContent(archiver, memberInfo);
 
         // Update directory and member info
         archiver->directory.numMembers++;
@@ -71,24 +59,8 @@ void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
         archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
             *memberInfo;
 
-        writeDirectoryOnFile(archiver, TEMP_ARCHIVE_NAME);
-        // Insert file content
-        char buffer[BUFFER_SIZE];
-        int iterations = memberInfo->size / BUFFER_SIZE;
-        int bytesLeft = memberInfo->size % BUFFER_SIZE;
-
-        for (int i = 0; i < iterations; i++) {
-          fread(&buffer, sizeof(char), BUFFER_SIZE, fileToInsert);
-          fwrite(&buffer, sizeof(char), BUFFER_SIZE, tempArchiverFile);
-        }
-
-        fread(&buffer, sizeof(char), bytesLeft, fileToInsert);
-        fwrite(&buffer, sizeof(char), bytesLeft, tempArchiverFile);
+        writeDirectoryOnFile(archiver);
       }
-
-      fclose(fileToInsert);
     }
-    fclose(archiverRead);
-    fclose(archiverWrite);
   }
 }

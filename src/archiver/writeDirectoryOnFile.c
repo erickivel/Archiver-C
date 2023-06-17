@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void writeDirectoryOnFile(struct Archiver *archiver, char *filePath) {
-  FILE *archiverFile = fopen(filePath, "w");
+void writeDirectoryOnFile(struct Archiver *archiver) {
+  FILE *archiverFile = fopen(archiver->pathName, "r+b");
   struct Directory directory = archiver->directory;
 
   // Write directory info

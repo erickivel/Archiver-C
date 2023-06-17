@@ -23,7 +23,10 @@ int main() {
   filePaths.names[1] = name2;
 
   archiverInsert(archiver1, &filePaths);
-  struct Archiver *archiver = readArchiverFile("temp.vpp");
+  struct Archiver *archiver = readArchiverFile("backup.vpp");
+  printf("\n Directory num member %d\n", archiver->directory.numMembers);
+  printf("\n Directory start position %lu\n",
+         archiver->directory.startPosition);
   for (int i = 0; i < archiver->directory.numMembers; i++) {
     printf("\n File pathlen %d\n",
            archiver->directory.membersInfo[i].pathNameLen);
@@ -39,6 +42,20 @@ int main() {
     printf("\n File userId %d\n", archiver->directory.membersInfo[i].userID);
     printf("\n File size %lu\n", archiver->directory.membersInfo[i].size);
   }
+
+  struct MemberInfo firstMember = archiver->directory.membersInfo[0];
+
+  char firstContent[firstMember.size];
+
+  FILE *contFile = fopen(archiver->pathName, "rb");
+
+  fseek(contFile, firstMember.startPosition, SEEK_SET);
+
+  fread(firstContent, sizeof(char), firstMember.size, contFile);
+
+  firstContent[firstMember.size] = '\0';
+
+  printf("Content: %s", firstContent);
 
   return 0;
 }
