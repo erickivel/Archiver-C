@@ -29,38 +29,52 @@ void updateDirectorySize(struct Directory *directory) {
 }
 
 void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
-  if (filePaths->size > 0) {
-    for (int i = 0; i < filePaths->size; i++) {
-      struct MemberInfo *memberInfo =
-          findMemberInfo(archiver, filePaths->names[i]);
+  for (int i = 0; i < filePaths->size; i++) {
+    int memberIndex;
+    struct MemberInfo *memberInfo =
+        findMemberInfo(archiver, filePaths->names[i], &memberIndex);
 
-      if (memberInfo) {
-        return;
-        // Update file & archiver directory
-        archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
-            *memberInfo;
-        archiver->directory.numMembers++;
+    if (memberInfo) {
+      removeMemberContent(archiver, memberIndex);
 
-      } else {
-        // Insert file & update archiver directory
-        memberInfo = createMemberInfo(filePaths->names[i]);
-
-        appendMemberContent(archiver, memberInfo);
-
-        // Update directory and member info
-        archiver->directory.numMembers++;
-        archiver->directory.membersInfo =
-            realloc(archiver->directory.membersInfo,
-                    sizeof(struct MemberInfo) * archiver->directory.numMembers);
-        archiver->directory.size =
-            sizeof(size_t) + sizeof(int) +
-            archiver->directory.numMembers * sizeof(struct MemberInfo);
-        memberInfo->index = archiver->directory.numMembers;
-        archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
-            *memberInfo;
-
-        writeDirectoryOnFile(archiver);
+      struct MemberInfo memberData = *memberInfo;
+      // Update member & archiver directory (ordenate by start position)
+      for (int j = memberIndex; j < archiver->directory.numMembers - 1; j++) {
+        archiver->directory.membersInfo[j] =
+            archiver->directory.membersInfo[j + 1];
       }
+
+      // Update member size
+      struct stat st;
+      stat(memberData.pathName, &st);
+      memberData.size = st.st_size;
+
+      archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
+          memberData;
+
+      appendMemberContent(
+          archiver,
+          &archiver->directory.membersInfo[archiver->directory.numMembers - 1]);
+
+    } else {
+      memberInfo = createMemberInfo(filePaths->names[i]);
+
+      // Insert file
+      appendMemberContent(archiver, memberInfo);
+
+      // Update directory and member info
+      archiver->directory.numMembers++;
+      archiver->directory.membersInfo =
+          realloc(archiver->directory.membersInfo,
+                  sizeof(struct MemberInfo) * archiver->directory.numMembers);
+      archiver->directory.size =
+          sizeof(size_t) + sizeof(int) +
+          archiver->directory.numMembers * sizeof(struct MemberInfo);
+      memberInfo->index = archiver->directory.numMembers;
+      archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
+          *memberInfo;
     }
   }
+
+  writeDirectoryOnFile(archiver);
 }

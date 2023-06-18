@@ -1,6 +1,8 @@
 #include <sys/types.h>
 #include <time.h>
 
+#define BUFFER_SIZE 1024
+
 struct MemberInfo {
   int index;
   int pathNameLen;
@@ -33,9 +35,10 @@ struct Archiver *readArchiverFile(char *archiverPath);
 
 void writeDirectoryOnFile(struct Archiver *archiver);
 
-struct MemberInfo *findMemberInfo(struct Archiver *archiver, char *filePath);
+struct MemberInfo *findMemberInfo(struct Archiver *archiver, char *filePath,
+                                  int *memberIdx);
 
-void removeMember(struct Archiver *archiver, char *memberPath);
+void removeMemberContent(struct Archiver *archiver, int memberIndex);
 
 void appendMemberContent(struct Archiver *archiver,
                          struct MemberInfo *memberInfo);

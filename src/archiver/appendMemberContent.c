@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define BUFFER_SIZE 1024
-
 void appendMemberContent(struct Archiver *archiver,
                          struct MemberInfo *memberInfo) {
 
@@ -22,8 +20,8 @@ void appendMemberContent(struct Archiver *archiver,
   fseek(archiverFile, archiver->directory.startPosition, SEEK_SET);
 
   for (int i = 0; i < iterations; i++) {
-    fread(&buffer, sizeof(char), BUFFER_SIZE, fileToInsert);
-    fwrite(&buffer, sizeof(char), BUFFER_SIZE, archiverFile);
+    fread(buffer, sizeof(char), BUFFER_SIZE, fileToInsert);
+    fwrite(buffer, sizeof(char), BUFFER_SIZE, archiverFile);
   }
 
   fread(buffer, sizeof(char), bytesLeft, fileToInsert);
