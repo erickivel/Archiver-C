@@ -1,7 +1,6 @@
 #include "../archiver.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 #include <unistd.h>
 
 void removeMemberContent(struct Archiver *archiver, int memberIndex) {
@@ -22,8 +21,6 @@ void removeMemberContent(struct Archiver *archiver, int memberIndex) {
   fseek(archiverWrite, memberToDelete.startPosition, SEEK_SET);
   fseek(archiverRead, memberToDelete.startPosition + memberToDelete.size,
         SEEK_SET);
-  printf("Write archiver: %lu \n", ftell(archiverWrite));
-  printf("Read archiver: %lu \n", ftell(archiverRead));
 
   // Move backward all members content after the member content deleted
   for (int i = memberIndex; i < archiver->directory.numMembers - 1; i++) {
@@ -43,7 +40,7 @@ void removeMemberContent(struct Archiver *archiver, int memberIndex) {
     archiver->directory.membersInfo[i + 1].startPosition -= memberToDelete.size;
   }
   archiver->directory.startPosition -= memberToDelete.size;
-  // truncate(archiver->pathName, memberToDelete.size);
+  truncate(archiver->pathName, archiver->directory.startPosition - 1);
 
   fclose(archiverRead);
   fclose(archiverWrite);

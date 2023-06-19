@@ -23,11 +23,6 @@ struct MemberInfo *createMemberInfo(char *filePath) {
   return memberInfo;
 }
 
-void updateDirectorySize(struct Directory *directory) {
-  directory->size = sizeof(size_t) + sizeof(int) +
-                    directory->numMembers * sizeof(struct MemberInfo);
-}
-
 void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
   for (int i = 0; i < filePaths->size; i++) {
     int memberIndex;

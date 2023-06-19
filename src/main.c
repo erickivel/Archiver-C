@@ -1,46 +1,75 @@
 #include "archiver.h"
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
-int main() {
+struct FilePaths *readArgs(int argc, char *argv[]) {
+  struct FilePaths *filePaths = malloc(sizeof(struct FilePaths));
+  int idx = 0;
+  filePaths->size = argc - 3;
+  filePaths->names = malloc(sizeof(char) * filePaths->size);
+  for (int i = 3; i < argc; i++) {
+    filePaths->names[idx] = malloc(sizeof(char) * strlen(argv[i]) + 1);
+    strcpy(filePaths->names[idx], argv[i]);
+    idx++;
+  }
 
-  // struct stat st;
-  // stat("text.txt", &st);
-  // size_t s = st.st_size;
-  // printf("%lu", s);
+  return filePaths;
+}
 
-  struct Archiver *archiver1 = readArchiverFile("backup.vpp");
+int main(int argc, char *argv[]) {
 
-  struct FilePaths filePaths;
-  char *name1 = "text.txt";
-  char *name2 = "new.txt";
+  int opt;
+  struct FilePaths *filePaths;
 
-  filePaths.size = 2;
-  filePaths.names = malloc(sizeof(char) * filePaths.size);
-  filePaths.names[0] = name1;
-  filePaths.names[1] = name2;
+  struct Archiver *archiver;
 
-  archiverInsert(archiver1, &filePaths);
-  struct Archiver *archiver = readArchiverFile("backup.vpp");
-  printf("\n Directory num member %d\n", archiver->directory.numMembers);
-  printf("\n Directory start position %lu\n",
-         archiver->directory.startPosition);
+  while ((opt = getopt(argc, argv, "i:a:m:x:r:c:h")) != -1) {
+    switch (opt) {
+    case 'i':
+      archiver = readArchiverFile(optarg);
+      filePaths = readArgs(argc, argv);
+      archiverInsert(archiver, filePaths);
+      break;
+    case 'a':
+      break;
+    case 'm':
+      break;
+    case 'x':
+      break;
+    case 'r':
+      break;
+    case 'c':
+      break;
+    case 'h':
+      printf("Help\n");
+      break;
+    default: /* '?' */
+      fprintf(stderr, "Usage: %s [-t nsecs] [-n] name\n", argv[0]);
+      exit(EXIT_FAILURE);
+    }
+  }
+
+  printf("Directory num member %d\n", archiver->directory.numMembers);
+  printf("Directory  size %lu\n", archiver->directory.size);
+  printf("Directory start position %lu\n", archiver->directory.startPosition);
+  printf("======================================\n");
   for (int i = 0; i < archiver->directory.numMembers; i++) {
-    printf("\n File pathlen %d\n",
-           archiver->directory.membersInfo[i].pathNameLen);
-    printf("\n File pathName %s\n",
-           archiver->directory.membersInfo[i].pathName);
-    printf("\n File updatedAt  %lu\n ",
+    printf("File pathlen %d\n", archiver->directory.membersInfo[i].pathNameLen);
+    printf("File pathName %s\n ", archiver->directory.membersInfo[i].pathName);
+    printf(" File updatedAt %lu\n ",
            archiver->directory.membersInfo[i].updatedAt);
-    printf("\n File permissions %d\n",
+    printf("File permissions %d\n",
            archiver->directory.membersInfo[i].permissions);
-    printf("\n File index %d\n", archiver->directory.membersInfo[i].index);
-    printf("\n File start position %lu\n",
+    printf("File index %d\n", archiver->directory.membersInfo[i].index);
+    printf("File start position %lu\n",
            archiver->directory.membersInfo[i].startPosition);
-    printf("\n File userId %d\n", archiver->directory.membersInfo[i].userID);
-    printf("\n File size %lu\n", archiver->directory.membersInfo[i].size);
+    printf("File userId %d\n", archiver->directory.membersInfo[i].userID);
+    printf("File size %lu\n", archiver->directory.membersInfo[i].size);
+    printf("======================================\n");
   }
 
   struct MemberInfo firstMember = archiver->directory.membersInfo[0];

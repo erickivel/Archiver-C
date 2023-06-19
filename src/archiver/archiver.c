@@ -1,7 +1,5 @@
 #include "../archiver.h"
 
-void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths);
-
 void archiverMove(struct Archiver *archiver, char *targetFilePath,
                   struct FilePaths *filePaths);
 

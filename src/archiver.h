@@ -1,6 +1,9 @@
 #include <sys/types.h>
 #include <time.h>
 
+#ifndef ARCHIVER_H
+#define ACHIVER_H
+
 #define BUFFER_SIZE 1024
 
 struct MemberInfo {
@@ -57,3 +60,5 @@ void archiverRemove(struct Archiver *archiver, struct FilePaths *filePaths);
 void archiverList(struct Archiver *archiver);
 
 void archiverHelp();
+
+#endif
