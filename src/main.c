@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <unistd.h>
 
 struct FilePaths *readArgs(int argc, char *argv[], int startIndex) {
   struct FilePaths *filePaths = malloc(sizeof(struct FilePaths));
@@ -40,6 +39,9 @@ int main(int argc, char *argv[]) {
       archiverUpdate(archiver, filePaths);
       break;
     case 'm':
+      archiver = readArchiverFile(argv[3]);
+      filePaths = readArgs(argc, argv, 4);
+      archiverMove(archiver, optarg, filePaths);
       break;
     case 'x':
       break;
