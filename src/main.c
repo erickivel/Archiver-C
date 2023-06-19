@@ -9,10 +9,10 @@
 struct FilePaths *readArgs(int argc, char *argv[], int startIndex) {
   struct FilePaths *filePaths = malloc(sizeof(struct FilePaths));
   int idx = 0;
-  filePaths->size = argc - 3;
-  filePaths->names = malloc(sizeof(char) * filePaths->size);
+  filePaths->size = argc - startIndex;
+  filePaths->names = malloc(sizeof(char *) * filePaths->size);
   for (int i = startIndex; i < argc; i++) {
-    filePaths->names[idx] = malloc(sizeof(char) * strlen(argv[i]) + 1);
+    filePaths->names[idx] = malloc(sizeof(char) * (strlen(argv[i]) + 1));
     strcpy(filePaths->names[idx], argv[i]);
     idx++;
   }
@@ -44,6 +44,9 @@ int main(int argc, char *argv[]) {
     case 'x':
       break;
     case 'r':
+      archiver = readArchiverFile(optarg);
+      filePaths = readArgs(argc, argv, 3);
+      archiverRemove(archiver, filePaths);
       break;
     case 'c':
       break;
@@ -88,6 +91,15 @@ int main(int argc, char *argv[]) {
   firstContent[firstMember.size] = '\0';
 
   printf("Content: %s", firstContent);
+
+  fclose(contFile);
+
+  freeArchiver(archiver);
+  for (int i = 0; i < filePaths->size; i++) {
+    free(filePaths->names[i]);
+  }
+  free(filePaths->names);
+  free(filePaths);
 
   return 0;
 }

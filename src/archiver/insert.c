@@ -68,6 +68,8 @@ void archiverInsert(struct Archiver *archiver, struct FilePaths *filePaths) {
       memberInfo->index = archiver->directory.numMembers;
       archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
           *memberInfo;
+
+      free(memberInfo);
     }
   }
 

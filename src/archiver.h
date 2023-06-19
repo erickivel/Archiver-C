@@ -61,4 +61,6 @@ void archiverList(struct Archiver *archiver);
 
 void archiverHelp();
 
+void freeArchiver(struct Archiver *archiver);
+
 #endif

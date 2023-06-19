@@ -8,8 +8,11 @@ void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths) {
     struct MemberInfo *memberInfo =
         findMemberInfo(archiver, filePaths->names[i], &memberIndex);
 
-    if (!memberInfo)
+    if (!memberInfo) {
+      printf("The file '%s' doesn't exist on the archiver '%s'\n",
+             filePaths->names[i], archiver->pathName);
       return;
+    }
 
     struct MemberInfo memberData = *memberInfo;
 
@@ -17,8 +20,11 @@ void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths) {
     stat(memberInfo->pathName, &memberToUpdateStat);
 
     // If member to insert update date is older do not update
-    if (memberToUpdateStat.st_mtime <= memberData.updatedAt)
+    if (memberToUpdateStat.st_mtime <= memberData.updatedAt) {
+      printf("'%s' was not updated since the last time it was archived\n",
+             filePaths->names[i]);
       return;
+    }
 
     printf("Updating: %s\n", memberData.pathName);
 
