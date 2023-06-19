@@ -1,4 +1,5 @@
 #include "../archiver.h"
+#include <stdio.h>
 #include <sys/stat.h>
 
 void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths) {
@@ -15,8 +16,11 @@ void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths) {
     struct stat memberToUpdateStat;
     stat(memberInfo->pathName, &memberToUpdateStat);
 
+    // If member to insert update date is older do not update
     if (memberToUpdateStat.st_mtime <= memberData.updatedAt)
       return;
+
+    printf("Updating: %s\n", memberData.pathName);
 
     removeMemberContent(archiver, memberIndex);
 
@@ -26,8 +30,9 @@ void archiverUpdate(struct Archiver *archiver, struct FilePaths *filePaths) {
           archiver->directory.membersInfo[j + 1];
     }
 
-    // Update member size
+    // Update member size and update date
     memberData.size = memberToUpdateStat.st_size;
+    memberData.updatedAt = memberToUpdateStat.st_mtime;
     archiver->directory.membersInfo[archiver->directory.numMembers - 1] =
         memberData;
 

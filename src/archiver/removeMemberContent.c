@@ -40,7 +40,7 @@ void removeMemberContent(struct Archiver *archiver, int memberIndex) {
     archiver->directory.membersInfo[i + 1].startPosition -= memberToDelete.size;
   }
   archiver->directory.startPosition -= memberToDelete.size;
-  truncate(archiver->pathName, archiver->directory.startPosition - 1);
+  truncate(archiver->pathName, archiver->directory.startPosition);
 
   fclose(archiverRead);
   fclose(archiverWrite);

@@ -6,12 +6,12 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-struct FilePaths *readArgs(int argc, char *argv[]) {
+struct FilePaths *readArgs(int argc, char *argv[], int startIndex) {
   struct FilePaths *filePaths = malloc(sizeof(struct FilePaths));
   int idx = 0;
   filePaths->size = argc - 3;
   filePaths->names = malloc(sizeof(char) * filePaths->size);
-  for (int i = 3; i < argc; i++) {
+  for (int i = startIndex; i < argc; i++) {
     filePaths->names[idx] = malloc(sizeof(char) * strlen(argv[i]) + 1);
     strcpy(filePaths->names[idx], argv[i]);
     idx++;
@@ -31,10 +31,13 @@ int main(int argc, char *argv[]) {
     switch (opt) {
     case 'i':
       archiver = readArchiverFile(optarg);
-      filePaths = readArgs(argc, argv);
+      filePaths = readArgs(argc, argv, 3);
       archiverInsert(archiver, filePaths);
       break;
     case 'a':
+      archiver = readArchiverFile(optarg);
+      filePaths = readArgs(argc, argv, 3);
+      archiverUpdate(archiver, filePaths);
       break;
     case 'm':
       break;
