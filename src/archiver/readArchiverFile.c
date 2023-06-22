@@ -4,14 +4,14 @@
 #include <string.h>
 
 struct Archiver *readArchiverFile(char *archiverPath) {
-  FILE *archiverFile = fopen(archiverPath, "r");
+  FILE *archiverFile = fopen(archiverPath, "rb");
 
   struct Archiver *archiver = malloc(sizeof(struct Archiver));
   archiver->pathName = malloc(sizeof(char) * (strlen(archiverPath) + 1));
   strcpy(archiver->pathName, archiverPath);
 
   if (!archiverFile) {
-    archiverFile = fopen(archiverPath, "w+");
+    archiverFile = fopen(archiverPath, "w+b");
     archiver->directory.numMembers = 0;
     // Jump the directory start position
     archiver->directory.startPosition = sizeof(size_t);

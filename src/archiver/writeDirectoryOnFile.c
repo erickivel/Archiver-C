@@ -13,6 +13,7 @@ void writeDirectoryOnFile(struct Archiver *archiver) {
 
   fwrite(&directory.size, sizeof(size_t), 1, archiverFile);
   fwrite(&directory.numMembers, sizeof(int), 1, archiverFile);
+
   // Write members info
   for (int i = 0; i < directory.numMembers; i++) {
     char *pathName = directory.membersInfo[i].pathName;

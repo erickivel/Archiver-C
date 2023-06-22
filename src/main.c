@@ -26,15 +26,15 @@ int main(int argc, char *argv[]) {
 
   struct Archiver *archiver;
 
-  while ((opt = getopt(argc, argv, "i:a:m:x:r:c:h")) != -1) {
+  while ((opt = getopt(argc, argv, "iam:xrch")) != -1) {
     switch (opt) {
     case 'i':
-      archiver = readArchiverFile(optarg);
+      archiver = readArchiverFile(argv[2]);
       filePaths = readArgs(argc, argv, 3);
       archiverInsert(archiver, filePaths);
       break;
     case 'a':
-      archiver = readArchiverFile(optarg);
+      archiver = readArchiverFile(argv[2]);
       filePaths = readArgs(argc, argv, 3);
       archiverUpdate(archiver, filePaths);
       break;
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
     case 'x':
       break;
     case 'r':
-      archiver = readArchiverFile(optarg);
+      archiver = readArchiverFile(argv[2]);
       filePaths = readArgs(argc, argv, 3);
       archiverRemove(archiver, filePaths);
       break;

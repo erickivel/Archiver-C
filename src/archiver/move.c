@@ -32,24 +32,24 @@ void archiverMove(struct Archiver *archiver, char *targetFilePath,
     memberToMove->index = targetMemberOrder;
 
     for (int j = 0; j < archiver->directory.numMembers; j++) {
-      struct MemberInfo currMember = archiver->directory.membersInfo[j];
+      struct MemberInfo *currMember = &archiver->directory.membersInfo[j];
 
-      if (&currMember != memberToMove) {
-        if (currMember.index > memberToMoveOrder &&
-            currMember.index <= targetMemberOrder)
-          (&currMember)->index--;
+      if (currMember != memberToMove) {
+        if (currMember->index > memberToMoveOrder &&
+            currMember->index <= targetMemberOrder)
+          currMember->index--;
       }
     }
   } else if (targetMemberOrder < memberToMoveOrder) {
     memberToMove->index = targetMemberOrder + 1;
 
     for (int j = 0; j < archiver->directory.numMembers; j++) {
-      struct MemberInfo currMember = archiver->directory.membersInfo[j];
+      struct MemberInfo *currMember = &archiver->directory.membersInfo[j];
 
-      if (&currMember != memberToMove) {
-        if (currMember.index < memberToMoveOrder &&
-            currMember.index > targetMemberOrder)
-          (&currMember)->index++;
+      if (currMember != memberToMove) {
+        if (currMember->index < memberToMoveOrder &&
+            currMember->index > targetMemberOrder)
+          currMember->index++;
       }
     }
   }
