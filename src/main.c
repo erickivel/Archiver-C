@@ -54,6 +54,9 @@ int main(int argc, char *argv[]) {
       archiverRemove(archiver, filePaths);
       break;
     case 'c':
+      archiver = readArchiverFile(argv[2]);
+      filePaths = NULL;
+      archiverList(archiver);
       break;
     case 'h':
       printf("Help\n");
@@ -64,47 +67,15 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  printf("Directory num member %d\n", archiver->directory.numMembers);
-  printf("Directory  size %lu\n", archiver->directory.size);
-  printf("Directory start position %lu\n", archiver->directory.startPosition);
-  printf("======================================\n");
-  for (int i = 0; i < archiver->directory.numMembers; i++) {
-    printf("File pathlen %d\n", archiver->directory.membersInfo[i].pathNameLen);
-    printf("File pathName %s\n ", archiver->directory.membersInfo[i].pathName);
-    printf(" File updatedAt %lu\n ",
-           archiver->directory.membersInfo[i].updatedAt);
-    printf("File permissions %d\n",
-           archiver->directory.membersInfo[i].permissions);
-    printf("File index %d\n", archiver->directory.membersInfo[i].index);
-    printf("File start position %lu\n",
-           archiver->directory.membersInfo[i].startPosition);
-    printf("File userId %d\n", archiver->directory.membersInfo[i].userID);
-    printf("File size %lu\n", archiver->directory.membersInfo[i].size);
-    printf("======================================\n");
-  }
-
-  struct MemberInfo firstMember = archiver->directory.membersInfo[0];
-
-  char firstContent[firstMember.size];
-
-  FILE *contFile = fopen(archiver->pathName, "rb");
-
-  fseek(contFile, firstMember.startPosition, SEEK_SET);
-
-  fread(firstContent, sizeof(char), firstMember.size, contFile);
-
-  firstContent[firstMember.size] = '\0';
-
-  printf("Content: %s", firstContent);
-
-  fclose(contFile);
-
   freeArchiver(archiver);
-  for (int i = 0; i < filePaths->size; i++) {
-    free(filePaths->names[i]);
+
+  if (filePaths) {
+    for (int i = 0; i < filePaths->size; i++) {
+      free(filePaths->names[i]);
+    }
+    free(filePaths->names);
+    free(filePaths);
   }
-  free(filePaths->names);
-  free(filePaths);
 
   return 0;
 }
