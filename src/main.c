@@ -44,6 +44,9 @@ int main(int argc, char *argv[]) {
       archiverMove(archiver, optarg, filePaths);
       break;
     case 'x':
+      archiver = readArchiverFile(argv[2]);
+      filePaths = readArgs(argc, argv, 3);
+      archiverExtract(archiver, filePaths);
       break;
     case 'r':
       archiver = readArchiverFile(argv[2]);
